@@ -48,6 +48,11 @@
     color: #666;
     margin-top: 4px;
   }
+  .ver {
+    font-weight: 400;
+    font-size: 0.85em;
+    color: #666;
+  }
 </style>
 </head>
 <body>
@@ -56,15 +61,39 @@
     <strong>DAS JESUS-PUZZLE UND DER WAHRE HEILIGE GRAL - Die wiederentdeckte Geschichte Jesu und der direkte Weg zur Erleuchtung</strong> 
     <li>  
       <a href="https://isunnytt.github.io/SunnySoftAll/Jesus-Puzzle/Jesus-Puzzle.html">
-        Jesus-Puzzle <span class="desc">Online (enjoy always latest version)</span>
+        Jesus-Puzzle Online <span class="ver" id="ver-online"></span><span class="desc">(enjoy always latest version)</span>
       </a>
     </li>
     <li>  
       <a href="https://isunnytt.github.io/SunnySoftAll/Jesus-Puzzle/Jesus-Puzzle.zip">
-        Jesus-Puzzle <span class="desc">Offline (download, extract, no auto-updates)</span>
+        Jesus-Puzzle Offline <span class="ver" id="ver-offline"></span><span class="desc">(download and extract zip, open html, no auto-updates)</span>
       </a>
     </li>
     <!-- Weitere Projekte hier einfach als neuer <li> ergänzen -->
   </ul>
+
+  <script>
+    // Liest die Versionskennung live aus den ersten Bytes der Jesus-Puzzle.html
+    // (per HTTP-Range-Anfrage, ohne die komplette - u.U. sehr grosse - Datei zu laden)
+    // und zeigt sie hinter beiden Links an (Online und Offline stammen aus demselben Build-Stand).
+    async function loadVersion(url) {
+      try {
+        const res = await fetch(url, { headers: { Range: 'bytes=0-4095' } });
+        const text = await res.text();
+        const m = text.match(/id="appVersion"[^>]*content="([^"]*)"/);
+        if (!m || !m[1]) return;
+        const full = m[1];
+        const ver = full.length >= 8 ? full.slice(-8) : full;
+        if (!ver || ver.indexOf('1234567') !== -1) return; // unveraenderter Platzhalter
+        const on = document.getElementById('ver-online');
+        const off = document.getElementById('ver-offline');
+        if (on) on.textContent = ver;
+        if (off) off.textContent = ver;
+      } catch (e) {
+        // Links funktionieren auch ohne Versionsanzeige
+      }
+    }
+    loadVersion('https://isunnytt.github.io/SunnySoftAll/Jesus-Puzzle/Jesus-Puzzle.html');
+  </script>
 </body>
 </html>
