@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Synthesis</title>
-    <meta id="contentHash" name="content-hash" content="208a4aa19c6e03b7ef8f8a5204b207e03a6396a55b333128adffba10d4c329ce">
+    <meta id="contentHash" name="content-hash" content="d6419b574cffda2d22f3c73c49465c1b73476621b301f5cce399b30a722b2e14">
     <meta id="contentHashText" name="content-hash-text" content="32bf2d119d865cfed27e08e7b4ac82d873223997e221fb79bcd3ebb16407c671">
+    <meta id="appVersion" name="app-version" content="V1234567">
     <script src="https://cdn.tailwindcss.com"></script>
 	<style>
 		:root {
@@ -4950,8 +4951,9 @@ for (let i = 1; i <= 88; i++) images.push(SLIDE_IMAGES[i] || null);
         }
 
         function svu() {
-            var sId = "V1234567V 260824";
-            var ver = sId.substring(sId.length-8);
+            var m = document.getElementById('appVersion');
+            var full = m ? (m.getAttribute('content') || '') : '';
+            var ver = full.length >= 8 ? full.substring(full.length - 8) : full;
             var s = document.getElementById('sv');
 	        var i = document.getElementById('iWT');
 																																																														var a = "V "+"IN"+"VAL"+"ID"+" ! ";		
