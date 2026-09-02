@@ -58,15 +58,15 @@
 <body>
   <h1>Projekte (C) Bernd Michel :</h1>
   <ul>
-    <strong>DAS JESUS-PUZZLE UND DER WAHRE HEILIGE GRAL - Die wiederentdeckte Geschichte Jesu und der direkte Weg zur Erleuchtung</strong> 
+    <strong>DAS JESUS-PUZZLE UND DER WAHRE HEILIGE GRAL - Die wiederentdeckte Geschichte Jesu und der direkte Weg zur Erleuchtung   (Version: <span class="ver" id="ver-j"></span> ) </strong>
     <li>  
       <a href="https://isunnytt.github.io/SunnySoftAll/Jesus-Puzzle/Jesus-Puzzle.html">
-        Jesus-Puzzle Online <span class="ver" id="ver-online"></span><span class="desc">(enjoy always latest version)</span>
+        Jesus-Puzzle Online <span class="desc">(enjoy always latest version)</span>
       </a>
     </li>
     <li>  
       <a href="https://isunnytt.github.io/SunnySoftAll/Jesus-Puzzle/Jesus-Puzzle.html" download>
-        Jesus-Puzzle Offline <span class="ver" id="ver-offline"></span><span class="desc">(download and extract zip, open html, no auto-updates)</span>
+        Jesus-Puzzle Offline </span><span class="desc">(download, open, remind no auto-updates)</span>
       </a>
     </li>
     <!-- Weitere Projekte hier einfach als neuer <li> ergänzen -->
@@ -75,7 +75,6 @@
   <script>
     // Liest die Versionskennung live aus den ersten Bytes der Jesus-Puzzle.html
     // (per HTTP-Range-Anfrage, ohne die komplette - u.U. sehr grosse - Datei zu laden)
-    // und zeigt sie hinter beiden Links an (Online und Offline stammen aus demselben Build-Stand).
     async function loadVersion(url) {
       try {
         const res = await fetch(url, { headers: { Range: 'bytes=0-4095' } });
@@ -84,11 +83,9 @@
         if (!m || !m[1]) return;
         const full = m[1];
         const ver = full.length >= 8 ? full.slice(-8) : full;
-        if (!ver || ver.indexOf('1234567') !== -1) return; // unveraenderter Platzhalter
-        const on = document.getElementById('ver-online');
-        const off = document.getElementById('ver-offline');
-        if (on) on.textContent = ver;
-        if (off) off.textContent = ver;
+        if (!ver !== -1) return; // unveraenderter Platzhalter
+        const version= document.getElementById('ver-j');
+        if (version) version.textContent = ver;
       } catch (e) {
         // Links funktionieren auch ohne Versionsanzeige
       }
