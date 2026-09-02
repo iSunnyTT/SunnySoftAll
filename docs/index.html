@@ -58,7 +58,7 @@
 <body>
   <h1>Projekte (C) Bernd Michel :</h1>
   <ul>
-    <strong>DAS JESUS-PUZZLE UND DER WAHRE HEILIGE GRAL - Die wiederentdeckte Geschichte Jesu und der direkte Weg zur Erleuchtung   (Version: <span class="ver" id="ver-j"></span> ) </strong>
+    <strong>DAS JESUS-PUZZLE UND DER WAHRE HEILIGE GRAL - Die wiederentdeckte Geschichte Jesu und der direkte Weg zur Erleuchtung   <span class="ver">( Version <span class id="verJesus"></span> ) </span></strong>
     <li>  
       <a href="https://isunnytt.github.io/SunnySoftAll/Jesus-Puzzle/Jesus-Puzzle.html">
         Jesus-Puzzle Online <span class="desc">(enjoy always latest version)</span>
@@ -73,19 +73,19 @@
   </ul>
 
   <script>
-    // Liest die Versionskennung live aus den ersten Bytes der Jesus-Puzzle.html
-    // (per HTTP-Range-Anfrage, ohne die komplette - u.U. sehr grosse - Datei zu laden)
+    // Liest die Versionskennung live aus den letzten Bytes der Jesus-Puzzle.html
+    // (per HTTP-Range-Anfrage, ohne die komplette - u.U. sehr grosse - Datei zu laden).
+    // Der Marker liegt bewusst im Hash-geschuetzten Bereich am Dateiende.
     async function loadVersion(url) {
       try {
-        const res = await fetch(url, { headers: { Range: 'bytes=0-4095' } });
+        const res = await fetch(url, { headers: { Range: 'bytes=-32768' } });
         const text = await res.text();
-        const m = text.match(/id="appVersion"[^>]*content="([^"]*)"/);
+        const m = text.match(/V1234567([^"]*)"/);
         if (!m || !m[1]) return;
         const full = m[1];
         const ver = full.length >= 8 ? full.slice(-8) : full;
-//        if (!ver || ver.indexOf('1234567') !== -1) return; // unveraenderter Platzhalter
-        const versionj = document.getElementById('ver-j');
-        if (versionj) versionj.textContent = ver;
+        const vJesus = document.getElementById('verJesus');
+        if (vJesus) vJesus.textContent = ver;
       } catch (e) {
         // Links funktionieren auch ohne Versionsanzeige
       }
