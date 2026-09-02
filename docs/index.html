@@ -83,13 +83,13 @@
         if (!m || !m[1]) return;
         const full = m[1];
         const ver = full.length >= 8 ? full.slice(-8) : full;
-        if (!ver !== -1) return; // unveraenderter Platzhalter
-        const version= document.getElementById('ver-j');
-        if (version) version.textContent = ver;
+        if (!ver || ver.indexOf('1234567') !== -1) return; // unveraenderter Platzhalter
+        const on = document.getElementById('ver-j');
+        if (on) on.textContent = ver;
       } catch (e) {
         // Links funktionieren auch ohne Versionsanzeige
       }
-    }
+    }     
     loadVersion('https://isunnytt.github.io/SunnySoftAll/Jesus-Puzzle/Jesus-Puzzle.html');
   </script>
 </body>
