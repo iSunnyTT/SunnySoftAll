@@ -84,8 +84,8 @@
         const full = m[1];
         const ver = full.length >= 8 ? full.slice(-8) : full;
         if (!ver || ver.indexOf('1234567') !== -1) return; // unveraenderter Platzhalter
-        const version-j = document.getElementById('ver-j');
-        if (version-j) version-j.textContent = ver;
+        const on = document.getElementById('ver-j');
+        if (on) on.textContent = ver;
       } catch (e) {
         // Links funktionieren auch ohne Versionsanzeige
       }
