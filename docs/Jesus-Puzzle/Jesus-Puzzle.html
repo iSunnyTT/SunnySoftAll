@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Synthesis</title>
-    <meta id="contentHash" name="content-hash" content="df9fa2794ce30be259a819f4aa1d145bb774029ecb9e5cc69359ad90ead77512">
+    <meta id="contentHash" name="content-hash" content="3fb6381336ba501401c97f92f3f55b16824b79eef5fca636137633c874f6f811">
         <meta id="contentHashText" name="content-hash-text" content="187c0a2f980d56361ef3e28c3b6d9c03ad86f804647d2fe5faf3f56467e86357">
     <script src="https://cdn.tailwindcss.com"></script>
 	<style>
@@ -24,7 +24,7 @@
 		#bg-container { position: fixed; top:0; left:0; width:100%; height:100%; z-index: -1; background-size: cover; background-position: center; transition: opacity 3s ease-in-out; }
 
 		header {
-			flex: 0 0 auto; width: 100%; border-bottom: 1px solid #ccc; background: #ffffff;
+			flex: 0 0 auto; width: 100%; background: #ffffff;
 			display: flex; flex-direction: column;
 		}
 		.header-wrapper {
@@ -58,10 +58,19 @@
 		.slide-table td, .slide-table th { word-wrap: break-word; overflow-wrap: break-word; padding: 3px 4px; vertical-align: top; }
 
 		footer {
-			flex: 0 0 24px; height: 24px; border-top: 1px solid #ccc; background: #ffffff;
+			flex: 0 0 24px; height: 24px; background: #ffffff;
 			display: flex; justify-content: center; align-items: center; gap: 1rem; width: 100%;
 		}
-		footer button { height: 24px; cursor: pointer; background: transparent; border: none; padding: 0 5px; display: flex; align-items: center; }
+		footer button { height: 24px; cursor: pointer; background: transparent; border: none; padding: 0 5px; display: flex; align-items: center; color: inherit; }
+
+		/* ==== Dark Mode ==== */
+		body.dark-mode, body.dark-mode header, body.dark-mode footer, body.dark-mode main {
+			background: #121212; color: #e8e8e8;
+		}
+		body.dark-mode .slide-table td, body.dark-mode .slide-table th { border-color: #666 !important; }
+		body.dark-mode main::-webkit-scrollbar-thumb { background: #555; }
+		body.dark-mode main::-webkit-scrollbar-track { background: #222; }
+		#langBtn { width: 1.4em; text-align: center; padding: 0 !important; font-weight: bold; border-radius: 3px; }
 
 		/* ==== Blätter-Effekt (Page-Flip) ==== */
 		#flip-overlay {
@@ -150,7 +159,7 @@
         <button onclick="nav(-1)">&#9664;</button>
         <button onclick="toggleGlobalRead()">&#128266;</button>
 		<button onclick="toggleFullscreen()" id="fsBtn">&#x26F6;</button>
-        <button onclick="toggleLanguage()" id="langBtn" title="Sprache wechseln / Switch language">DE</button>
+        <button onclick="toggleLanguage()" id="langBtn" title="Sprache/Darkmode wechseln / Switch language/dark mode" style="background:#000; color:#fff;">DE</button>
         <button onclick="nav(1)">&#9654;</button>
         <button onclick="navTo(78)" title="Zum Ende des Hauptteils">&#9654;&#9654;</button>
     </footer>
@@ -4840,19 +4849,41 @@ function updateLoadProgress(pct) {
 
 // ==== Sprachumschaltung DE/EN (Text: zwei Mirror-Bloecke, Code/Bilder gemeinsam) ====
 let currentLang = 'de';
+let darkMode = false;
+// state = 2-Bit-Zaehler: Bit1 (hoeherwertig) = Sprache (0=DE,1=EN), Bit0 = Darkmode (0=hell,1=dunkel)
+let langState = 0;
 function setLangLabel() {
     const l = document.getElementById('seite-label'); if (l) l.textContent = (currentLang === 'de') ? 'Seite' : 'Page';
-    const b = document.getElementById('langBtn'); if (b) b.textContent = (currentLang === 'de') ? 'DE' : 'EN';
+    const b = document.getElementById('langBtn');
+    if (b) {
+        // Button-Label zeigt die Sprache, die NACH dem naechsten Klick aktiv wird
+        const nextState = (langState + 1) % 4;
+        const nextLangIsDe = (nextState >> 1) === 0;
+        b.textContent = nextLangIsDe ? 'DE' : 'EN';
+        // Button-Farbe = invertiert zum aktuellen Hell/Dunkel-Zustand
+        if (darkMode) { b.style.background = '#fff'; b.style.color = '#000'; }
+        else { b.style.background = '#000'; b.style.color = '#fff'; }
+    }
+}
+function applyDarkMode() {
+    document.body.classList.toggle('dark-mode', darkMode);
 }
 function toggleLanguage() {
-    const newLang = (currentLang === 'de') ? 'en' : 'de';
-    const src = document.getElementById(newLang === 'de' ? 'textRegionMirror' : 'textRegionMirrorEN');
-    if (!src) return;
-    document.getElementById('content').innerHTML = src.textContent;
-    currentLang = newLang;
-    document.documentElement.lang = currentLang;
-    const active = document.getElementById('p' + cur);
-    if (cur !== 1) { const p1 = document.getElementById('p1'); if (p1) p1.classList.remove('active'); if (active) active.classList.add('active'); }
+    langState = (langState + 1) % 4;
+    const newLangIsDe = (langState >> 1) === 0;
+    darkMode = (langState & 1) === 1;
+    const newLang = newLangIsDe ? 'de' : 'en';
+    if (newLang !== currentLang) {
+        const src = document.getElementById(newLang === 'de' ? 'textRegionMirror' : 'textRegionMirrorEN');
+        if (src) {
+            document.getElementById('content').innerHTML = src.textContent;
+            currentLang = newLang;
+            document.documentElement.lang = currentLang;
+            const active = document.getElementById('p' + cur);
+            if (cur !== 1) { const p1 = document.getElementById('p1'); if (p1) p1.classList.remove('active'); if (active) active.classList.add('active'); }
+        }
+    }
+    applyDarkMode();
     setLangLabel();
     updateUI();
 }
