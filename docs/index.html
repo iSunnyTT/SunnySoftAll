@@ -67,19 +67,21 @@
     </li>
     <li>  
       <a href="https://isunnytt.github.io/SunnySoftAll/Jesus-Puzzle/Jesus-Puzzle.html" download data-goatcounter-click="download-jesus-puzzle">
-        <span style="color: #999">Jesus-Puzzle Offline </span><span class="desc" style="color:#999">(download, open, remind no auto-updates)</span>
+        Jesus-Puzzle Offline </span><span class="desc">(download, open, remind no auto-updates)</span>
       </a>
     </li>
     <!-- Weitere Projekte hier einfach als neuer <li> ergänzen -->
   </ul>
 
   <script>
-    // Liest die Versionskennung live aus den letzten Bytes der Jesus-Puzzle.html
-    // (per HTTP-Range-Anfrage, ohne die komplette - u.U. sehr grosse - Datei zu laden).
-    // Der Marker liegt bewusst im Hash-geschuetzten Bereich am Dateiende.
+    // Liest die Versionskennung live aus den ersten Bytes der Jesus-Puzzle.html
+    // (per HTTP-Range-Anfrage, ohne die komplette - sehr grosse - Datei zu laden).
+    // Der Marker liegt bewusst im Hash-geschuetzten Bereich ganz am Dateianfang
+    // (Prefix-Range statt Suffix-Range, da manche CDNs/Netzwerke Suffix-Ranges
+    // nicht zuverlaessig unterstuetzen und sonst die komplette Datei laden).
     async function loadVersion(url) {
       try {
-        const res = await fetch(url, { headers: { Range: 'bytes=-32768' } });
+        const res = await fetch(url, { headers: { Range: 'bytes=0-4095' } });
         const text = await res.text();
         const m = text.match(/V1234567([^"]*)"/);
         if (!m || !m[1]) return;
