@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Synthesis</title>
-    <meta id="contentHash" name="content-hash" content="2a4e05f64affbdc13e84f5d36216682f31182895982afa1650d0e902a269261c">
-        <meta id="contentHashText" name="content-hash-text" content="86f42755970db21d693f4028f31dacd14033736226da1cd8ecc8b8ed8b28f416">
+    <meta id="contentHash" name="content-hash" content="889a7f711cf861054be1ff9a977b2e2f86abee00f54ad2bbe08aa883ef8cc05a">
+        <meta id="contentHashText" name="content-hash-text" content="11dc7241fc891c6a1868740689b3bf9385353173db1576d56c4aa140257ffae2">
 	<style>
 		:root {
 			/* ==== Blätter-Effekt (Page-Flip): einstellbare Stil-Parameter ==== */
@@ -22,8 +22,8 @@
 		}
 		*, *::before, *::after { box-sizing: border-box; }
 
-		html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; display: flex; flex-direction: column; font-family: sans-serif; }
-		#bg-container { position: fixed; top:0; left:0; width:100%; height:100%; z-index: -1; background-size: cover; background-position: center; transition: opacity 3s ease-in-out; }
+		html, body { height: 100%; height: 100dvh; width: 100%; margin: 0; padding: 0; overflow: hidden; display: flex; flex-direction: column; font-family: sans-serif; }
+		#bg-container { position: fixed; top:0; left:0; width:100%; height:100%; height:100dvh; z-index: -1; background-size: cover; background-position: center; transition: opacity 3s ease-in-out; }
 
 		header {
 			flex: 0 0 auto; width: 100%; background: #ffffff;
@@ -63,15 +63,39 @@
 		.slide-table td, .slide-table th { word-wrap: break-word; overflow-wrap: break-word; padding: 3px 4px; vertical-align: top; }
 
 		footer {
-			flex: 0 0 24px; height: 24px; background: #ffffff;
-			display: flex; justify-content: center; align-items: center; gap: 1rem; width: 100%;
+			position: fixed; left: 0; bottom: 0; z-index: 450;
+			height: 24px; width: 100%;
+			background: transparent;
+			display: flex; justify-content: center; align-items: center; gap: 1rem;
 		}
 		footer button { height: 24px; cursor: pointer; background: transparent; border: none; padding: 0 5px; display: flex; align-items: center; color: inherit; }
+		#fsBtn { font-weight: bold; font-size: 1.05em; -webkit-text-stroke: 0.6px currentColor; }
+
+		/* ==== Seitensprung per Long-Press auf Vor-/Zurück-Buttons ==== */
+		.jp-nav-btn { position: relative; overflow: hidden; touch-action: manipulation; }
+		.jp-nav-btn.jp-longpress-active::after {
+			content: ""; position: absolute; inset: 0;
+			background: rgba(128,128,128,0.35);
+			transform-origin: left; transform: scaleX(0);
+			animation: jp-fill 500ms linear forwards;
+		}
+		@keyframes jp-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+		.jp-page-jump-overlay {
+			position: fixed; inset: 0; z-index: 500;
+			background: rgba(0,0,0,0.5);
+			display: flex; align-items: center; justify-content: center;
+		}
+		.jp-page-jump-overlay[hidden] { display: none; }
+		.jp-page-jump-overlay input {
+			font-size: 2rem; width: 4em; text-align: center;
+			border: none; border-radius: 6px; padding: 0.2em 0;
+		}
 
 		/* ==== Dark Mode ==== */
-		body.dark-mode, body.dark-mode header, body.dark-mode footer {
+		body.dark-mode, body.dark-mode header {
 			background: #121212; color: #e8e8e8;
 		}
+		body.dark-mode footer { background: transparent; color: #e8e8e8; }
 		body.dark-mode main { color: #e8e8e8; }
 		body.dark-mode .slide-table td, body.dark-mode .slide-table th { border-color: #666 !important; }
 		body.dark-mode main::-webkit-scrollbar-thumb { background: #555; }
@@ -161,14 +185,16 @@
     </div>
 
     <footer>
-        <button onclick="navTo(1)" title="Zur ersten Seite">&#9664;&#9664;</button>
-        <button onclick="nav(-1)">&#9664;</button>
+        <button id="btn-prev" class="jp-nav-btn">&#9664;</button>
         <button onclick="toggleGlobalRead()">&#128266;</button>
 		<button onclick="toggleFullscreen()" id="fsBtn">&#x26F6;</button>
         <button onclick="toggleLanguage()" id="langBtn" title="Sprache/Darkmode wechseln / Switch language/dark mode" style="background:#000; color:#fff;">DE</button>
-        <button onclick="nav(1)">&#9654;</button>
-        <button onclick="navTo(total)" title="Zum Ende">&#9654;&#9654;</button>
+        <button id="btn-next" class="jp-nav-btn">&#9654;</button>
     </footer>
+
+    <div id="jp-page-jump-overlay" class="jp-page-jump-overlay" hidden>
+        <input type="number" id="jp-page-jump-input" inputmode="numeric" min="1">
+    </div>
 
         <script type="text/plain" id="textRegionMirror" style="display:none"><article class="page active" id="p1" data-title="DAS JESUS-PUZZLE UND DER WAHRE HEILIGE GRAL">
 <div class="columns">
@@ -207,19 +233,15 @@
 <p><strong>Abkürzungen:</strong> direkt im Textfluss (Abk)</p>
 <p><strong>Jahreszahlen:</strong> Ohne Zusatz verstehen sich als „nach
       Christus“. Nur Zeiten "vor Christus" werden mit vorstehendem BCE (Before
-      Common Era) markiert, also z.B. BCE100. Abgekürzt verwende ich Jahrhundert
-      (JH), also z.B. 3.JH. Da es mir auf den Kontext ankommt verstehen sich
+      Common Era) markiert, also z.B. BCE100. Abgekürzt verwende ich Jahrhundert      (JH), also z.B. 3.JH. Da es mir auf den Kontext ankommt verstehen sich
       Jahresangaben mit geringerer Priorität und Präzision.</p>
 <p><strong>MINI-BEDIENANLEITUNG</strong></p>
 <p><strong>Buttons:</strong></p>
 <ul>
-<li>Anfang</li>
-<li>Vorherige Seite</li>
+<li>Vorherige Seite (click) bzw. Seiteneingabe (long press)</li>
 <li>Vollbild</li>
 <li>Modus (Light/Dark) und Sprache (DEutsch/ENglisch)</li>
-<li>Nächste Seite</li>
-<li>Ende (vor Anhang)</li>
-</ul>
+<li>Nächste Seite (click) bzw. Seiteneingabe (long press)</li></ul>
 <p><strong>Gesten:</strong></p>
 <ul>
 <li>Wischen (horizontal)</li>
@@ -2559,14 +2581,10 @@
       be understood with lower priority and precision.</p>
 <p><strong>QUICK START GUIDE</strong></p>
 <p><strong>Buttons:</strong></p>
-<ul>
-<li>Start</li>
-<li>Previous page</li>
+<ul><li>Previous page (click) / page Number (long press)</li>
 <li>Full screen</li>
 <li>Mode (Light/Dark) und Language (German/English)</li>
-<li>Next page</li>
-<li>End (before appendix)</li>
-</ul>
+<li>Next page (click) / page Number (long press)</li></ul>
 <p><strong>Gestures:</strong></p>
 <ul>
 <li>Swipe (horizontal)</li>
@@ -5223,6 +5241,94 @@ for (let i = 1; i <= 88; i++) images.push(SLIDE_IMAGES[i] || null);
         }
 
         function navTo(p) { if (!ok) return; nav(p - cur); }
+
+        // ==== Seitensprung per Long-Press auf Vor-/Zurück-Buttons ====
+        // Kurzer Klick: normales Vor-/Zurückblättern (nav(±1)).
+        // Long-Press (~500ms): öffnet Seiteneingabe-Overlay (ersetzt die früheren
+        // Anfang/Ende-Buttons). Wird die Fingerposition waehrend des Long-Press
+        // um mehr als MOVE_THRESHOLD verschoben (z.B. Beginn eines Wischers),
+        // wird der Long-Press abgebrochen und stattdessen nichts ausgeloest
+        // (kein Konflikt mit der Swipe-Navigation auf #app-body).
+        const JP_LONGPRESS_MS = 500;
+        const JP_MOVE_THRESHOLD = 10;
+
+        function jpSetupNavButton(btn, shortAction) {
+            let timer = null, triggered = false, moved = false, startX = 0, startY = 0;
+            function start(e) {
+                const pt = e.touches ? e.touches[0] : e;
+                startX = pt.clientX; startY = pt.clientY;
+                triggered = false; moved = false;
+                btn.classList.add('jp-longpress-active');
+                timer = setTimeout(() => {
+                    triggered = true;
+                    btn.classList.remove('jp-longpress-active');
+                    jpOpenPageJump();
+                }, JP_LONGPRESS_MS);
+            }
+            function move(e) {
+                if (!timer) return;
+                const pt = e.touches ? e.touches[0] : e;
+                if (Math.abs(pt.clientX - startX) > JP_MOVE_THRESHOLD || Math.abs(pt.clientY - startY) > JP_MOVE_THRESHOLD) {
+                    moved = true;
+                    clearTimeout(timer); timer = null;
+                    btn.classList.remove('jp-longpress-active');
+                }
+            }
+            function end(e) {
+                // Touch-Ende: nachfolgende, vom Browser simulierte Maus-Events
+                // (mousedown/mouseup/click) unterdruecken, sonst wuerde ein
+                // einzelner Tipp die Kurz-Klick-Aktion zweimal ausloesen.
+                if (e && e.type === 'touchend' && e.cancelable) e.preventDefault();
+                if (timer) { clearTimeout(timer); timer = null; }
+                btn.classList.remove('jp-longpress-active');
+                if (!triggered && !moved) shortAction();
+            }
+            function cancel() {
+                if (timer) { clearTimeout(timer); timer = null; }
+                btn.classList.remove('jp-longpress-active');
+            }
+            btn.addEventListener('mousedown', start);
+            btn.addEventListener('touchstart', start, { passive: true });
+            btn.addEventListener('mousemove', move);
+            btn.addEventListener('touchmove', move, { passive: true });
+            btn.addEventListener('mouseup', end);
+            btn.addEventListener('touchend', end);
+            btn.addEventListener('mouseleave', cancel);
+            btn.addEventListener('touchcancel', cancel);
+            btn.addEventListener('contextmenu', e => e.preventDefault());
+        }
+
+        function jpOpenPageJump() {
+            const overlay = document.getElementById('jp-page-jump-overlay');
+            const input = document.getElementById('jp-page-jump-input');
+            input.min = 1;
+            input.max = total;
+            input.value = cur;
+            overlay.hidden = false;
+            input.focus();
+            input.select();
+        }
+        function jpClosePageJump() {
+            document.getElementById('jp-page-jump-overlay').hidden = true;
+        }
+        function jpConfirmPageJump() {
+            const input = document.getElementById('jp-page-jump-input');
+            let val = parseInt(input.value, 10);
+            if (isNaN(val)) { jpClosePageJump(); return; }
+            val = Math.max(1, Math.min(total, val));
+            jpClosePageJump();
+            navTo(val);
+        }
+        document.getElementById('jp-page-jump-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') jpConfirmPageJump();
+            if (e.key === 'Escape') jpClosePageJump();
+        });
+        document.getElementById('jp-page-jump-overlay').addEventListener('click', (e) => {
+            if (e.target.id === 'jp-page-jump-overlay') jpClosePageJump();
+        });
+        jpSetupNavButton(document.getElementById('btn-prev'), () => nav(-1));
+        jpSetupNavButton(document.getElementById('btn-next'), () => nav(1));
+
 
         // Baut ein optisches "Blatt" (Schnappschuss der aktuellen Seite) vor den echten Inhalt,
         // lässt es um 180° drehen und tauscht den echten Inhalt dahinter unsichtbar sofort aus.
