@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Synthesis</title>
-    <meta id="contentHash" name="content-hash" content="94902cc08495035cacf17a6b89f9a2008ae529c1b850e08babe636fd794deb62">
+    <meta id="contentHash" name="content-hash" content="4c565fa1956c2bb4daa593d936f7cb25addc0446d8f3ae2fa142b0015b1f0dd3">
         <meta id="contentHashText" name="content-hash-text" content="11dc7241fc891c6a1868740689b3bf9385353173db1576d56c4aa140257ffae2">
 	<style>
 		:root {
 			/* ==== Blätter-Effekt (Page-Flip): einstellbare Stil-Parameter ==== */
-			--flip-duration: 1200ms;                              /* Dauer der Blätter-Animation (Sync mit JS: FLIP_DURATION_MS) */
+			--flip-duration: 1000ms;                              /* Dauer der Blätter-Animation (Sync mit JS: FLIP_DURATION_MS) */
 			--flip-easing: cubic-bezier(0.45, 0.05, 0.15, 1);     /* Bewegungskurve der Blätter-Animation */
 			--flip-perspective: 1800px;                           /* 3D-Tiefe; kleiner = staerker gewoelbt/dramatischer */
 			--flip-page-bg: #fdfdfa;                              /* Papierfarbe der umblaetternden Seite */
@@ -4947,13 +4947,13 @@ setLangLabel();
 
 // ==== Blätter-Effekt (Page-Flip): einstellbare Verhaltens-Parameter ====
         const FLIP_ENABLED = true;         // Blätter-Animation komplett an/aus (false = sofortiger Wechsel wie vorher)
-        const FLIP_DURATION_MS = 1200;     // Dauer der Animation in ms - MUSS mit CSS --flip-duration übereinstimmen (wird unten automatisch synchronisiert)
+        const FLIP_DURATION_MS = 1000;     // Dauer der Animation in ms - MUSS mit CSS --flip-duration übereinstimmen (wird unten automatisch synchronisiert)
         const SWIPE_MIN_DISTANCE = 80;     // Mindest-Wischweite in px, damit geblättert wird
         const SWIPE_DIRECTION_RATIO = 2;   // horizontale Bewegung muss X-mal staerker sein als vertikale, um als Wisch-Blättern zu zaehlen (statt Scrollen)
 
         // ==== Hintergrundbild-Fade: einstellbare Parameter ====
         const BG_FADE_START_OPACITY = 0.9;  // Deckkraft direkt nach Bildwechsel/Antippen (Startwert des Fades)
-        const BG_FADE_END_OPACITY = 0.2;    // Deckkraft, zu der ausgeblendet wird (Endwert des Fades)
+        const BG_FADE_END_OPACITY = 0.1;    // Deckkraft, zu der ausgeblendet wird (Endwert des Fades)
         const BG_FADE_DURATION_MS = 3000;   // Dauer der Ausblendung in ms
         const BG_FADE_START_DELAY_MS = 50;  // kurze Verzoegerung, damit der Sprung auf den Startwert sicher gerendert wird, bevor der Fade beginnt
 
