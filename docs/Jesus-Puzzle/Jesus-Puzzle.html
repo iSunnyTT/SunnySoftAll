@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Synthesis</title>
-    <meta id="contentHash" name="content-hash" content="4c565fa1956c2bb4daa593d936f7cb25addc0446d8f3ae2fa142b0015b1f0dd3">
+    <meta id="contentHash" name="content-hash" content="f2ad49a4d4ad5e38a7b4eadf27a8aec59cc70b86ad9902598184b704f3f6e373">
         <meta id="contentHashText" name="content-hash-text" content="11dc7241fc891c6a1868740689b3bf9385353173db1576d56c4aa140257ffae2">
 	<style>
 		:root {
 			/* ==== Blätter-Effekt (Page-Flip): einstellbare Stil-Parameter ==== */
-			--flip-duration: 1000ms;                              /* Dauer der Blätter-Animation (Sync mit JS: FLIP_DURATION_MS) */
+			--flip-duration: 1200ms;                              /* Dauer der Blätter-Animation (Sync mit JS: FLIP_DURATION_MS) */
 			--flip-easing: cubic-bezier(0.45, 0.05, 0.15, 1);     /* Bewegungskurve der Blätter-Animation */
 			--flip-perspective: 1800px;                           /* 3D-Tiefe; kleiner = staerker gewoelbt/dramatischer */
 			--flip-page-bg: #fdfdfa;                              /* Papierfarbe der umblaetternden Seite */
@@ -26,7 +26,7 @@
 		#bg-container { position: fixed; top:0; left:0; width:100%; height:100%; height:100dvh; z-index: -1; background-size: cover; background-position: center; transition: opacity 3s ease-in-out; }
 
 		header {
-			flex: 0 0 auto; width: 100%; background: #ffffff;
+			flex: 0 0 auto; width: 100%; background: transparent;
 			display: flex; flex-direction: column;
 		}
 		.header-wrapper {
@@ -43,8 +43,8 @@
 			flex: 1; overflow-y: scroll; font-size: 0.72rem; line-height: 1.4; width: 100%; padding: 1rem 16px; scrollbar-gutter: stable; touch-action: pan-y; 
 		}
 		main::-webkit-scrollbar { width: 10px; }
-		main::-webkit-scrollbar-thumb { background: #bbb; border-radius: 5px; }
-		main::-webkit-scrollbar-track { background: #f0f0f0; }
+		main::-webkit-scrollbar-thumb { background: rgba(120,120,120,0.5); border-radius: 5px; }
+		main::-webkit-scrollbar-track { background: rgba(180,180,180,0.15); }
 
 		.page { display: none; }
 		.page.active { display: block; }
@@ -92,14 +92,13 @@
 		}
 
 		/* ==== Dark Mode ==== */
-		body.dark-mode, body.dark-mode header {
-			background: #121212; color: #e8e8e8;
-		}
+		body.dark-mode { background: #121212; color: #e8e8e8; }
+		body.dark-mode header { background: transparent; }
 		body.dark-mode footer { background: transparent; color: #e8e8e8; }
 		body.dark-mode main { color: #e8e8e8; }
 		body.dark-mode .slide-table td, body.dark-mode .slide-table th { border-color: #666 !important; }
-		body.dark-mode main::-webkit-scrollbar-thumb { background: #555; }
-		body.dark-mode main::-webkit-scrollbar-track { background: #222; }
+		body.dark-mode main::-webkit-scrollbar-thumb { background: rgba(160,160,160,0.5); }
+		body.dark-mode main::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
 		#langBtn { width: 1.6em; height: 1.4em; line-height: 1.4em; font-size: 0.8rem; text-align: center; padding: 0 !important; font-weight: bold; border-radius: 3px; }
 
 		/* ==== Blätter-Effekt (Page-Flip) ==== */
@@ -125,8 +124,14 @@
 		/* Header wird mit auf das Blatt genommen, damit Titel/Seitenzahl wie bei einer echten Buchseite mitblaettern. */
 		.flip-leaf-header {
 			position: absolute; top: 0; left: 0; width: 100%;
-			background: #ffffff; border-bottom: 1px solid #ccc; box-sizing: border-box; overflow: hidden;
+			background: transparent; box-sizing: border-box; overflow: hidden;
 		}
+		.flip-leaf-header-bg {
+			position: absolute; inset: 0;
+			background-size: cover; background-position: center; background-repeat: no-repeat;
+			pointer-events: none;
+		}
+		.flip-leaf-header-content { position: relative; }
 		.flip-leaf-body {
 			position: absolute; left: 0; width: 100%; overflow: hidden;
 		}
@@ -175,7 +180,10 @@
 
     <div id="flip-overlay" aria-hidden="true">
         <div class="flip-leaf">
-            <div class="flip-leaf-header"></div>
+            <div class="flip-leaf-header">
+                <div class="flip-leaf-header-bg"></div>
+                <div class="flip-leaf-header-content"></div>
+            </div>
             <div class="flip-leaf-body">
                 <div class="flip-leaf-bg"></div>
                 <div class="flip-leaf-content"></div>
@@ -4891,7 +4899,7 @@
         <div class="page-title" id="page-title"></div>
     </script>
 
-<script id="mainScript" class="app-script">var sId = "V1234567V 260912";
+<script id="mainScript" class="app-script">var sId = "V1234567V 260913";
 
 { const hm = document.getElementById('textRegionMirrorHeader'); const hdr = document.querySelector('header'); if (hm && hdr) hdr.innerHTML = hm.textContent; }
 function updateLoadProgress(pct) {
@@ -4953,7 +4961,7 @@ setLangLabel();
 
         // ==== Hintergrundbild-Fade: einstellbare Parameter ====
         const BG_FADE_START_OPACITY = 0.9;  // Deckkraft direkt nach Bildwechsel/Antippen (Startwert des Fades)
-        const BG_FADE_END_OPACITY = 0.1;    // Deckkraft, zu der ausgeblendet wird (Endwert des Fades)
+        const BG_FADE_END_OPACITY = 0.2;    // Deckkraft, zu der ausgeblendet wird (Endwert des Fades)
         const BG_FADE_DURATION_MS = 3000;   // Dauer der Ausblendung in ms
         const BG_FADE_START_DELAY_MS = 50;  // kurze Verzoegerung, damit der Sprung auf den Startwert sicher gerendert wird, bevor der Fade beginnt
 
@@ -5339,10 +5347,12 @@ for (let i = 1; i <= 88; i++) images.push(SLIDE_IMAGES[i] || null);
             const overlay = document.getElementById('flip-overlay');
             const leaf = overlay ? overlay.querySelector('.flip-leaf') : null;
             const leafHeader = overlay ? overlay.querySelector('.flip-leaf-header') : null;
+            const leafHeaderBg = overlay ? overlay.querySelector('.flip-leaf-header-bg') : null;
+            const leafHeaderContent = overlay ? overlay.querySelector('.flip-leaf-header-content') : null;
             const leafBody = overlay ? overlay.querySelector('.flip-leaf-body') : null;
             const leafBg = overlay ? overlay.querySelector('.flip-leaf-bg') : null;
             const inner = overlay ? overlay.querySelector('.flip-leaf-content') : null;
-            if (!headerEl || !contentEl || !fromPage || !overlay || !leaf || !leafHeader || !leafBody || !inner) { applyChange(); return; }
+            if (!headerEl || !contentEl || !fromPage || !overlay || !leaf || !leafHeader || !leafHeaderContent || !leafBody || !inner) { applyChange(); return; }
 
             // Header wird mit auf das Blatt genommen (wie bei einer echten Buchseite, auf der Kolumnentitel/Seitenzahl mitgedruckt sind).
             const headerRect = headerEl.getBoundingClientRect();
@@ -5354,33 +5364,41 @@ for (let i = 1; i <= 88; i++) images.push(SLIDE_IMAGES[i] || null);
             overlay.style.height = (headerRect.height + rect.height) + 'px';
 
             leafHeader.style.height = headerRect.height + 'px';
-            leafHeader.innerHTML = headerEl.innerHTML;
+            leafHeaderContent.innerHTML = headerEl.innerHTML;
             // IDs aus dem Klon entfernen, damit z.B. getElementById('page-title') weiterhin eindeutig das echte Element trifft.
-            leafHeader.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+            leafHeaderContent.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
 
             leafBody.style.top = headerRect.height + 'px';
             leafBody.style.height = rect.height + 'px';
 
             // Aktuelles Hintergrundbild (mit aktueller Deckkraft) auf dem Blatt "einfrieren", damit es beim Blättern mitgedreht wird statt zu verschwinden.
             // Der Bildausschnitt wird exakt wie beim echten, fixierten Vollbild-Hintergrund berechnet (nicht nur grob "cover" auf die Blattgroesse),
-            // damit beim Erscheinen des Blatts kein sichtbarer Sprung im Bild entsteht. Ist das Bild in diesem Moment
+            // damit beim Erscheinen des Blatts kein sichtbarer Sprung im Bild entsteht - sowohl fuer den Body- als auch den Header-Teil des Blatts
+            // (der Header ist ja im Ruhezustand ebenfalls transparent und zeigt das Hintergrundbild durch). Ist das Bild in diesem Moment
             // noch nicht fertig dekodiert (Groesse unbekannt), lieber gar kein Bild zeigen (nur Papierfarbe) als
             // eine falsche/grobe Schaetzung, die staerker "springt" als gar kein Bild.
-            if (leafBg) {
-                const im = imgCache.get(cur - 1);
-                if (im && im.complete && im.naturalWidth && im.naturalHeight) {
-                    const bgCs = window.getComputedStyle(bg);
+            const im = imgCache.get(cur - 1);
+            if (im && im.complete && im.naturalWidth && im.naturalHeight) {
+                const bgCs = window.getComputedStyle(bg);
+                const vw = window.innerWidth, vh = window.innerHeight;
+                const scale = Math.max(vw / im.naturalWidth, vh / im.naturalHeight);
+                const dispW = im.naturalWidth * scale, dispH = im.naturalHeight * scale;
+                const offX = (vw - dispW) / 2, offY = (vh - dispH) / 2;
+                if (leafBg) {
                     leafBg.style.backgroundImage = bgCs.backgroundImage;
                     leafBg.style.opacity = bgCs.opacity;
-                    const vw = window.innerWidth, vh = window.innerHeight;
-                    const scale = Math.max(vw / im.naturalWidth, vh / im.naturalHeight);
-                    const dispW = im.naturalWidth * scale, dispH = im.naturalHeight * scale;
-                    const offX = (vw - dispW) / 2, offY = (vh - dispH) / 2;
                     leafBg.style.backgroundSize = dispW + 'px ' + dispH + 'px';
                     leafBg.style.backgroundPosition = (offX - rect.left) + 'px ' + (offY - rect.top) + 'px';
-                } else {
-                    leafBg.style.backgroundImage = 'none';
                 }
+                if (leafHeaderBg) {
+                    leafHeaderBg.style.backgroundImage = bgCs.backgroundImage;
+                    leafHeaderBg.style.opacity = bgCs.opacity;
+                    leafHeaderBg.style.backgroundSize = dispW + 'px ' + dispH + 'px';
+                    leafHeaderBg.style.backgroundPosition = (offX - headerRect.left) + 'px ' + (offY - headerRect.top) + 'px';
+                }
+            } else {
+                if (leafBg) leafBg.style.backgroundImage = 'none';
+                if (leafHeaderBg) leafHeaderBg.style.backgroundImage = 'none';
             }
 
             inner.style.padding = cs.padding;
