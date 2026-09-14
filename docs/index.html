@@ -59,41 +59,20 @@
 <body>
   <h1>Projekte (C) Bernd Michel :</h1>
   <ul>
-    <strong>DAS JESUS-PUZZLE UND DER WAHRE HEILIGE GRAL - Die wiederentdeckte Geschichte Jesu und der direkte Weg zur Erleuchtung   <span class="ver">( Version <span class id="verJesus"></span> ) </span></strong>
+    <strong>   </strong>
     <li>  
       <a href="https://isunnytt.github.io/SunnySoftAll/Jesus-Puzzle/Jesus-Puzzle.html" data-goatcounter-click="online-jesus-puzzle">
-        Jesus-Puzzle Online <span class="desc">(enjoy always latest version)</span>
+        DAS JESUS-PUZZLE UND DER WAHRE HEILIGE GRAL - Die wiederentdeckte Geschichte Jesu und der direkte Weg zur Erleuchtung <span class="desc">Online: enjoy always latest version</span>
       </a>
     </li>
+<!--
     <li>  
       <a href="https://isunnytt.github.io/SunnySoftAll/Jesus-Puzzle/Jesus-Puzzle.html" download data-goatcounter-click="download-jesus-puzzle">
         <span style="color: #999">Jesus-Puzzle Offline </span><span class="desc" style="color:#999">(download, open, remind no auto-updates)</span>
       </a>
     </li>
-    <!-- Weitere Projekte hier einfach als neuer <li> ergänzen -->
+-->
+<!-- Weitere Projekte hier einfach als neuer <li> ergänzen -->
   </ul>
-
-  <script>
-    // Liest die Versionskennung live aus den ersten Bytes der Jesus-Puzzle.html
-    // (per HTTP-Range-Anfrage, ohne die komplette - sehr grosse - Datei zu laden).
-    // Der Marker liegt bewusst im Hash-geschuetzten Bereich ganz am Dateianfang
-    // (Prefix-Range statt Suffix-Range, da manche CDNs/Netzwerke Suffix-Ranges
-    // nicht zuverlaessig unterstuetzen und sonst die komplette Datei laden).
-    async function loadVersion(url) {
-      try {
-        const res = await fetch(url, { headers: { Range: 'bytes=0-4095' } });
-        const text = await res.text();
-        const m = text.match(/V1234567([^"]*)"/);
-        if (!m || !m[1]) return;
-        const full = m[1];
-        const ver = full.length >= 8 ? full.slice(-8) : full;
-        const vJesus = document.getElementById('verJesus');
-        if (vJesus) vJesus.textContent = ver;
-      } catch (e) {
-        // Links funktionieren auch ohne Versionsanzeige
-      }
-    }     
-    loadVersion('https://isunnytt.github.io/SunnySoftAll/Jesus-Puzzle/Jesus-Puzzle.html');
-  </script>
 </body>
 </html>
