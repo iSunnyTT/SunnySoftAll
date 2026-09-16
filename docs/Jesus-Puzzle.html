@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Jesus-Puzzle</title>
-    <meta id="contentHash" name="content-hash" content="20bfd5227967dc8a7d4c02a99c8e599eee642f262716ba48fdf5905511c5fcdb">
+    <meta id="contentHash" name="content-hash" content="b3cb15c50d91a115eb1a09999566f8ef8a63748ac3a9636673e05e5c6019d8bb">
         <meta id="contentHashText" name="content-hash-text" content="004bf895a802746cb52f20fd988863892f25a07ed9a29741c3d0ba568102919a">
 	<style>
 		:root {
@@ -3780,12 +3780,27 @@ for (let i = 1; i <= 53; i++) images.push(SLIDE_IMAGES[i] || null);
 			}
 		}
 
+		// Passende installierte Stimme finden: exakter Treffer (z.B. "de-DE"),
+		// sonst irgendeine Stimme derselben Sprachfamilie (z.B. "en-GB" statt
+		// "en-US"), sonst gar kein lang setzen (Browser-Standardstimme) statt
+		// eine nicht installierte Sprache zu erzwingen.
+		function pickVoiceLang(desired) {
+			const voices = window.speechSynthesis.getVoices();
+			if (!voices.length) return desired; // Stimmenliste noch nicht geladen -> optimistisch setzen
+			if (voices.some(v => v.lang.toLowerCase() === desired.toLowerCase())) return desired;
+			const primary = desired.split('-')[0].toLowerCase();
+			const sameFamily = voices.find(v => v.lang.toLowerCase().split('-')[0] === primary);
+			return sameFamily ? sameFamily.lang : null;
+		}
+
 		function speakCurrentPage() {
 			const pageEl = document.getElementById('p'+cur);
 			const title = pageEl.getAttribute('data-title');
 			const text = (title ? title + '. ' : '') + pageEl.innerText;
 			const msg = new SpeechSynthesisUtterance(text);
-			msg.lang = (currentLang === 'de') ? 'de-DE' : 'en-US';
+			const desiredLang = (currentLang === 'de') ? 'de-DE' : 'en-US';
+			const resolvedLang = pickVoiceLang(desiredLang);
+			if (resolvedLang) msg.lang = resolvedLang;
 			msg.onend = () => {
 				if (isGlobalReading && cur < total) {
 					nav(1);
