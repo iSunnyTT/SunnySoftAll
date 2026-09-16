@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Heiliger-Gral</title>
-    <meta id="contentHash" name="content-hash" content="3af21f63845e213e6ba0f3d396d4e9390caba02b9e2e8f16e23b1bb2cd96719e">
+    <meta id="contentHash" name="content-hash" content="b8f341918a5c71b886bd80c16d63ea85bdd65deec968dfee5c477a815023aef6">
         <meta id="contentHashText" name="content-hash-text" content="68b837114a11c002028cb46ef7672d1112802f9a442576b6e73604adf2b68394">
 	<style>
 		:root {
@@ -2694,12 +2694,27 @@ for (let i = 1; i <= 41; i++) images.push(SLIDE_IMAGES[i] || null);
 			}
 		}
 
+		// Passende installierte Stimme finden: exakter Treffer (z.B. "de-DE"),
+		// sonst irgendeine Stimme derselben Sprachfamilie (z.B. "en-GB" statt
+		// "en-US"), sonst gar kein lang setzen (Browser-Standardstimme) statt
+		// eine nicht installierte Sprache zu erzwingen.
+		function pickVoiceLang(desired) {
+			const voices = window.speechSynthesis.getVoices();
+			if (!voices.length) return desired; // Stimmenliste noch nicht geladen -> optimistisch setzen
+			if (voices.some(v => v.lang.toLowerCase() === desired.toLowerCase())) return desired;
+			const primary = desired.split('-')[0].toLowerCase();
+			const sameFamily = voices.find(v => v.lang.toLowerCase().split('-')[0] === primary);
+			return sameFamily ? sameFamily.lang : null;
+		}
+
 		function speakCurrentPage() {
 			const pageEl = document.getElementById('p'+cur);
 			const title = pageEl.getAttribute('data-title');
 			const text = (title ? title + '. ' : '') + pageEl.innerText;
 			const msg = new SpeechSynthesisUtterance(text);
-			msg.lang = (currentLang === 'de') ? 'de-DE' : 'en-US';
+			const desiredLang = (currentLang === 'de') ? 'de-DE' : 'en-US';
+			const resolvedLang = pickVoiceLang(desiredLang);
+			if (resolvedLang) msg.lang = resolvedLang;
 			msg.onend = () => {
 				if (isGlobalReading && cur < total) {
 					nav(1);
