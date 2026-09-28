@@ -4,19 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Projekte</title>
-<script data-goatcounter="https://isunnytt.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+
 <style>
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
     max-width: 640px;
-    margin: 60px auto;
+    margin: 30px auto;
     padding: 0 20px;
     color: #222;
     line-height: 1.2;
   }
   h1 {
     font-size: 1.2em;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
   }
   ul {
     list-style: none;
@@ -54,30 +54,97 @@
     font-size: 0.85em;
     color: #666;
   }
+  /* Lokale Dev-Links: diese Datei liegt identisch auch im GitHub-Repo -
+     dort sollen sie gar nicht erst auftauchen. Default versteckt, JS
+     blendet sie nur ein, wenn die Seite tatsaechlich von localhost laeuft. */
+  .local-link { display: none; }
 </style>
 </head>
 <body>
   <h1>Projekte (C) Bernd Michel :</h1>
   <ul>
     <strong>   </strong>
-    <li>  
-      <a href="https://isunnytt.github.io/SunnySoftAll/Jesus-Puzzle.html" data-goatcounter-click="online-jesus-puzzle">
+
+<!-- Lokal - nur sichtbar, wenn diese Seite selbst von localhost aus laeuft -->
+    <li class="local-link">
+      <a href="http://localhost:8080/SunnyBooks.html" data-version-check>
+        SunnyBooks (Master&Editor)
+      </a>
+    </li>
+    <li class="local-link">
+      <a href="http://localhost:8080/Jesus-Puzzle.html" data-version-check>
+        Jesus-Puzzle (lokal)
+      </a>
+    </li>
+    <li class="local-link">
+      <a href="http://localhost:8080/Heiliger-Gral.html" data-version-check>
+        Heiliger-Gral (lokal)
+      </a>
+    </li>
+
+    <li class="local-link">
+      <a href="https://isunnytt.github.io/SunnySoftAll/">
+        Meine Projekte auf GITHUB
+      </a>
+    </li>
+
+<!-- GitHub -->
+
+    <li>
+      <a href="https://isunnytt.github.io/SunnySoftAll/Jesus-Puzzle.html" data-goatcounter-click="online-jesus-puzzle" data-version-check>
         DAS JESUS-PUZZLE - Die wiederentdeckte Geschichte Jesu<span class="desc">(Online: enjoy always latest version)</span>
       </a>
     </li>
-    <li>  
-      <a href="https://isunnytt.github.io/SunnySoftAll/Heiliger-Gral.html" data-goatcounter-click="online-heiliger-gral">
+    <li>
+      <a href="https://isunnytt.github.io/SunnySoftAll/Heiliger-Gral.html" data-goatcounter-click="online-heiliger-gral" data-version-check>
         DER WAHRE HEILIGE GRAL - Der direkte Weg zur Erleuchtung <span class="desc">(Online: enjoy always latest version)</span>
       </a>
     </li>
 <!--
-    <li>  
+    <li>
       <a href="https://isunnytt.github.io/SunnySoftAll/Jesus-Puzzle/Jesus-Puzzle.html" download data-goatcounter-click="download-jesus-puzzle">
         <span style="color: #999">Jesus-Puzzle Offline </span><span class="desc" style="color:#999">(download, open, remind no auto-updates)</span>
       </a>
     </li>
 -->
-<!-- Weitere Projekte hier einfach als neuer <li> ergänzen -->
+
   </ul>
+
+<script>
+(function () {
+  // 1.) Lokale Entwicklungs-Links nur zeigen, wenn diese Seite selbst
+  // gerade von localhost aus laeuft (dieselbe Datei liegt unveraendert
+  // auch im GitHub-Repo - dort ist der Hostname dann github.io).
+  var isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  if (isLocal) {
+    document.querySelectorAll('.local-link').forEach(function (li) {
+      li.classList.remove('local-link');
+    });
+  }
+
+  // 2.) Cache-Busting per tatsaechlichem Last-Modified-Datum der Zieldatei:
+  // per HEAD-Request abfragen und als Query-Parameter anhaengen. So bekommt
+  // jeder Link automatisch eine neue URL, sobald sich die Zieldatei
+  // aendert - ohne Versionsnummer von Hand pflegen zu muessen. Sowohl
+  // Pythons http.server (lokal) als auch GitHub Pages senden den
+  // Last-Modified-Header von sich aus mit.
+  // Schlaegt der Request fehl (Server ohne HEAD-Unterstuetzung, CORS bei
+  // Seitenaufruf von einem anderen Ursprung, offline), bleibt der Link
+  // einfach unveraendert - dann greift halt wieder der normale Cache.
+  document.querySelectorAll('a[data-version-check]').forEach(function (a) {
+    var url = a.getAttribute('href');
+    fetch(url, { method: 'HEAD', cache: 'no-store' })
+      .then(function (res) {
+        var lm = res.headers.get('Last-Modified');
+        if (!lm) return;
+        var t = new Date(lm).getTime();
+        if (!isFinite(t)) return;
+        var sep = url.indexOf('?') === -1 ? '?' : '&';
+        a.setAttribute('href', url + sep + 't=' + t);
+      })
+      .catch(function () { /* Link bleibt wie er ist */ });
+  });
+})();
+</script>
 </body>
 </html>
