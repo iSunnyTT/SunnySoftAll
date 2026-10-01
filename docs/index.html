@@ -42,6 +42,10 @@
   a:hover {
     background: #e8e8e8;
   }
+
+  /* Erster Link rot, letzter grün */
+  body > ul > li:not(.local-link):first-of-type a { color: red; }
+  body > ul > li:not(.local-link):last-of-type a { color: green; }
   .desc {
     display: block;
     font-weight: 400;
@@ -67,10 +71,15 @@
 
 <!-- Lokal - nur sichtbar, wenn diese Seite selbst von localhost aus laeuft -->
     <li class="local-link">
-      <a href="http://localhost:8080/SunnyBooks.html" data-version-check>
-        SunnyBooks (Master&Editor)
+      <a href="http://localhost:8080/SunnyBooks-Master.html" data-version-check>
+        SunnyBooks-Master (Mein Master)
       </a>
     </li>
+     <li class="local-link">
+      <a href="http://localhost:8080/SunnyBooks.html" data-version-check>
+        SunnyBooks (Editor)
+      </a>
+    </li>   
     <li class="local-link">
       <a href="http://localhost:8080/Jesus-Puzzle.html" data-version-check>
         Jesus-Puzzle (lokal)
@@ -98,6 +107,11 @@
     <li>
       <a href="https://isunnytt.github.io/SunnySoftAll/Heiliger-Gral.html" data-goatcounter-click="online-heiliger-gral" data-version-check>
         DER WAHRE HEILIGE GRAL - Der direkte Weg zur Erleuchtung <span class="desc">(Online: enjoy always latest version)</span>
+      </a>
+    </li>
+    <li>
+      <a href="https://isunnytt.github.io/SunnySoftAll/SunnyBooks.html" data-goatcounter-click="online-SunnyBooks" data-version-check>
+        SunnyBooks - Mein wysiwyg-Editor<span class="desc">(um Bücher zu erstellen)</span>
       </a>
     </li>
 <!--
