@@ -122,6 +122,18 @@
     else li.classList.remove('dev-link');
   });
 
+  // GoatCounter nur online laden (lokal/file:// wird nichts gezaehlt oder geladen).
+  // Zaehlt den Seitenaufruf der Index und die data-goatcounter-click-Klicks.
+  // GC_CODE = Name deines GoatCounter-Kontos (xxx in xxx.goatcounter.com).
+  var GC_CODE = 'isunnytt';
+  if (isOnline) {
+    var gc = document.createElement('script');
+    gc.async = true;
+    gc.setAttribute('data-goatcounter', 'https://' + GC_CODE + '.goatcounter.com/count');
+    gc.src = 'https://gc.zgo.at/count.js';
+    document.head.appendChild(gc);
+  }
+
   // 2.) Cache-Busting per tatsaechlichem Last-Modified-Datum der Zieldatei:
   // per HEAD-Request abfragen und als Query-Parameter anhaengen. So bekommt
   // jeder Link automatisch eine neue URL, sobald sich die Zieldatei
