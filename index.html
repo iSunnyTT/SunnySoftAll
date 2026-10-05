@@ -43,9 +43,6 @@
     background: #e8e8e8;
   }
 
-  /* Erster Link rot, letzter grün */
-  body > ul > li:not(.local-link):first-of-type a { color: red; }
-  body > ul > li:not(.local-link):last-of-type a { color: green; }
   .desc {
     display: block;
     font-weight: 400;
@@ -58,10 +55,10 @@
     font-size: 0.85em;
     color: #666;
   }
-  /* Lokale Dev-Links: diese Datei liegt identisch auch im GitHub-Repo -
-     dort sollen sie gar nicht erst auftauchen. Default versteckt, JS
-     blendet sie nur ein, wenn die Seite tatsaechlich von localhost laeuft. */
-  .local-link { display: none; }
+  /* Dev-Links: diese Datei liegt identisch auch im GitHub-Repo - online
+     sollen sie nie auftauchen. Default versteckt; JS blendet sie nur ein,
+     wenn die Seite NICHT auf der Live-Domain laeuft (sicher: ohne JS bleiben sie weg). */
+  .dev-link { display: none; }
 </style>
 </head>
 <body>
@@ -69,9 +66,9 @@
   <ul>
     <strong>   </strong>
 
-<!-- Lokal - nur sichtbar, wenn diese Seite selbst von localhost aus laeuft -->
+<!-- Dev-Links - nur sichtbar, wenn die Seite nicht auf der Live-Domain laeuft -->
 
-    <li class="local-link">
+    <li class="dev-link">
       <a href="http://localhost:8080/SunnyBooks-Master.html" data-version-check>
         SunnyBooks-Master (Mein Master)
       </a>
@@ -79,7 +76,7 @@
     
 <!-- Link zu GitHub -->
 
-    <li class="local-link">
+    <li class="dev-link">
       <a href="https://isunnytt.github.io/">
         Mein GITHUB Repo
       </a>
@@ -114,15 +111,15 @@
 
 <script>
 (function () {
-  // 1.) Lokale Entwicklungs-Links nur zeigen, wenn diese Seite selbst
-  // gerade von localhost aus laeuft (dieselbe Datei liegt unveraendert
-  // auch im GitHub-Repo - dort ist der Hostname dann github.io).
-  var isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-  if (isLocal) {
-    document.querySelectorAll('.local-link').forEach(function (li) {
-      li.classList.remove('local-link');
-    });
-  }
+  // 1.) Dev-Links nur zeigen, wenn die Seite NICHT auf der Live-Domain laeuft.
+  // Positiver Test auf die Domain: alles andere (localhost, file://, LAN-IP,
+  // Android, Fork/Preview) gilt als nicht online. Online werden die Dev-Links
+  // komplett aus dem DOM entfernt (dann greift auch "erster Link rot").
+  var isOnline = location.hostname.toLowerCase() === 'isunnytt.github.io';
+  document.querySelectorAll('.dev-link').forEach(function (li) {
+    if (isOnline) li.remove();
+    else li.classList.remove('dev-link');
+  });
 
   // 2.) Cache-Busting per tatsaechlichem Last-Modified-Datum der Zieldatei:
   // per HEAD-Request abfragen und als Query-Parameter anhaengen. So bekommt
